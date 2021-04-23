@@ -1,29 +1,40 @@
 const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb+srv://amybui:Mongo2014@cluster0.u3iji.mongodb.net/StockDB?retryWrites=true&w=majority";
 
-MongoClient.connect(url, function(err, database) {
-    if (err) {
-        return console.log(err);
-    }
+function main() {
+    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, database) {
+        if (err) {
+            return console.log("Connection to Mongo err: " + err);
+        }
 
-    var dbo = database.db("StockDB");
-    var collection = dbo.collection("companies");
+        var dbo = database.db("StockDB");
+        var collection = dbo.collection("companies");
 
-    console.log("Success!! :)");
+        console.log("Success!! :)");
 
-    // database.close();
-})
+        // database.close();
+    })
+
+}
 
 
 // Readling lines
-var csvParser = require('csv-parser');
-var readline = require('readline');
-var fs = require('fs');
+function read() {
+    var csvParser = require('csv-parser');
+    var readline = require('readline');
+    var fs = require('fs');
 
-var companiesFile = readline.createInterface(
-    {
-        input: fs.createReadStream('companies.csv')
-    }
-);
+    var companiesFile = readline.createInterface(
+        {
+            input: fs.createReadStream('companies.csv')
+        }
+    );
 
-companiesFile.on()
+    companiesFile.on()
+}
+
+
+
+
+
+main();
