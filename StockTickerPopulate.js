@@ -1,8 +1,11 @@
 /*
  * StockTickerPopulate.js
+ * (Part 1)
  *
  * Uses information from companies.csv file to populate specified 
- * Mongo database. 
+ * Mongo database. Requires companies.csv.
+ * 
+ * Includes additional fuctions used for testing.
  *
  * Author: Amy Bui
  * Comp20
@@ -44,9 +47,6 @@ function main() {
 
         parseWithCSVParser(collection, database);
         // deleteAllData(collection, database);
-
-
-        // database.close();
     });
 }
 
@@ -54,7 +54,8 @@ function main() {
 /* readFileWithReadLine
  *
  * Uses readline module to read lines from companies.csv file.
- * Resource used: Lecture Example
+ * Resource used: Lecture Example.
+ * Note: Used for testing. Not used in implementation.
  */
 function readFileWithReadLine() {
     var myFile = readline.createInterface(
@@ -74,26 +75,28 @@ function readFileWithReadLine() {
 function parseWithCSVParser(coll, db) {
     var dataArr = [];
     fs.createReadStream(path.join(__dirname, '', dataFile))
-    
         .on('error', function() {
-            // handle error
-            console.log(`An error ocurred :(`);
+            console.log(`An error ocurred while reading file :(`);
         })
-
         .pipe(csvParser())
-
         .on('data', function(row) {
             var newData = objectWithCustomKeys(row);
-            coll.insertOne(newData, (err, res) => {
-                if (err) throw err;
-                // console.log('inserted new doc');
-            });
+            dataArr.push(newData);
+            // console.log(newData);
+            // coll.insertOne(newData, (err, res) => {
+            //     if (err) throw err;
+            //     // console.log('inserted new doc');
+            // });
         })
-
         .on('end', function() {
             // console.log(`End of csv file.`);
+            // console.log(dataArr);
+            coll.insertMany(dataArr, (err, res) => {
+                if (err) throw err;
+                console.log(`Inserted ${res.insertedCount} documents`);
+                db.close();
+            });
         });
-
 }
 
 /* objectWithCustomKeys
@@ -121,7 +124,8 @@ function deleteAllData(coll, database) {
 
 /* displayOneItem
  *
- * Displays information from database using a query. 
+ * Displays information from database using a query, the company
+ * name contained in variable called target.
  */
 function displayOneItem(collection, database, target) {
     var s = collection.find().stream();
@@ -136,9 +140,6 @@ function displayOneItem(collection, database, target) {
 }
 
 
-// async function closeDB(database) {
-//     return await database.close();
-// }
 
 /**** main driver ****/
 main();

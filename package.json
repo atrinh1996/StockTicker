@@ -4,7 +4,8 @@
   "description": "returns company name or stock ticker based on user's query",
   "main": "StockTickerPopulate.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node StockTickerPopulate.js",
+    "dev": "nodemon StockTickerPopulate.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/atrinh1996/StockTicker#readme",
   "dependencies": {
     "csv-parser": "^3.0.0",
-    "mongodb": "^3.6.6"
+    "mongodb": "^3.6.6",
+    "nodemon": "^2.0.7"
   }
 }
