@@ -89,7 +89,6 @@ function parseWithCSVParser(coll, db) {
             // });
         })
         .on('end', function() {
-            // console.log(`End of csv file.`);
             // console.log(dataArr);
             coll.insertMany(dataArr, (err, res) => {
                 if (err) throw err;
