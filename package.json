@@ -2,7 +2,7 @@
   "name": "stockticker",
   "version": "1.0.0",
   "description": "returns company name or stock ticker based on user's query",
-  "main": "node_StockTicker.js",
+  "main": "StockTickerPopulate.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,5 +1,8 @@
 /*
- * node_StockTicker.js
+ * StockTickerPopulate.js
+ *
+ * Uses information from companies.csv file to populate specified 
+ * Mongo database. 
  *
  * Author: Amy Bui
  * Comp20
@@ -39,60 +42,8 @@ function main() {
 
         // console.log("Success!! :)");
 
-        /***** Display Entire Database using query *****/
-        // theQuery = "";
-        // // theQuery = {name:"Facebook"};    // not in db
-        // collection.find(theQuery).toArray((err, items) => {
-        //     if (err) {
-        //         console.log("Query Error: " + err);
-        //         database.close();
-        //     } else {
-        //         console.log("Items: ");
-        //         for (i = 0; i < items.length; i++) {
-        //             console.log(`${i}: ${items[i].name} has ticker ${items[i].ticker}`);
-        //         }
-        //         database.close();
-        //     }
-        // });
-
-        /******** Display Database with stream ********/
-        // var s = collection.find().stream();
-
-        // console.log("before find");
-        // s.on("data", function(item) {
-        //     console.log(`Data: ${item.name}`);
-        // });
-
-        // s.on("end", function() {
-        //     console.log("end of data");
-        //     database.close();
-        // });
-
-        // console.log("after close");
-
-
-        /***** Insert into Database *******/
-        // var newData = {"name": "Facebook", "ticker": "FB"};
-        // collection.insertOne(newData, (err, res) => {
-        //     if (err) throw err;
-        //     console.log("new doc inserted");
-        //     database.close();
-        // });
-
-        /******** Delete Data from Database w/ query *******/
-        // var theQuery = {name: "Facebook"};
-        // collection.deleteMany(theQuery, (err, obj) => {
-        //     if (err) throw err;
-        //     console.log(`Document(s) deleted`);
-        //     database.close();
-        // });
-
-        // readFileWithReadLine();
-
-        // parseWithCSVParser(collection);
+        parseWithCSVParser(collection, database);
         // deleteAllData(collection, database);
-
-        displayOneItem(collection, database, "Adidas");
 
 
         // database.close();
@@ -120,7 +71,8 @@ function readFileWithReadLine() {
  * Uses the csv-parser package to read from companies.csv file.
  * Resources used: https://dev.to/isalevine/parsing-csv-files-in-node-js-with-fs-createreadstream-and-csv-parser-koi
  */
-function parseWithCSVParser(coll) {
+function parseWithCSVParser(coll, db) {
+    var dataArr = [];
     fs.createReadStream(path.join(__dirname, '', dataFile))
     
         .on('error', function() {
@@ -129,28 +81,28 @@ function parseWithCSVParser(coll) {
         })
 
         .pipe(csvParser())
-        .on('data', function(row) {
-            // use row data
-            // console.log(row)
-            // console.log(`Object: ${row}`);
-            // console.log(`Company called ${row.Company} has ticker code ${row["Ticker"]}.`);
 
-            var newData = row;
+        .on('data', function(row) {
+            var newData = objectWithCustomKeys(row);
             coll.insertOne(newData, (err, res) => {
                 if (err) throw err;
-                console.log("new doc inserted");
-                // database.close();
+                // console.log('inserted new doc');
             });
         })
+
         .on('end', function() {
-            // handle end of csv
-            console.log(`End of csv file.`);
+            // console.log(`End of csv file.`);
         });
 
-    // deleteAllData(coll);
+}
 
-
-
+/* objectWithCustomKeys
+ *
+ * Returns an object to be inserted to database with 
+ * custom key fields. 
+ */
+function objectWithCustomKeys(rowObj) {
+    return {"name":rowObj.Company, "ticker":rowObj.Ticker};
 }
 
 
@@ -184,23 +136,9 @@ function displayOneItem(collection, database, target) {
 }
 
 
-// Readling lines
-// function read() {
-//     var csvParser = require('csv-parser');
-//     var readline = require('readline');
-//     var fs = require('fs');
-
-//     var companiesFile = readline.createInterface(
-//         {
-//             input: fs.createReadStream('companies.csv')
-//         }
-//     );
-
-//     companiesFile.on()
+// async function closeDB(database) {
+//     return await database.close();
 // }
 
-
-
-
-
+/**** main driver ****/
 main();
