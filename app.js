@@ -78,7 +78,7 @@ const server = http.createServer((req, res) => {
                             // console.log(`${i}: ${items[i].name} has ticker ${items[i].ticker}`);
                             t += `${items[i].name} (${items[i].ticker})<br>`;
                         }
-                        database.close();
+                        // database.close();
                         res.end(t);
                     }
                 });
