@@ -4,8 +4,8 @@
   "description": "returns company name or stock ticker based on user's query",
   "main": "StockTickerPopulate.js",
   "scripts": {
-    "start": "node StockTickerPopulate.js",
-    "dev": "nodemon StockTickerPopulate.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
