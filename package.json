@@ -2,7 +2,7 @@
   "name": "stockticker",
   "version": "1.0.0",
   "description": "returns company name or stock ticker based on user's query",
-  "main": "StockTickerPopulate.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
