@@ -43,10 +43,12 @@ function main() {
         var dbo = database.db("StockDB");
         var collection = dbo.collection('companies');
 
-        // console.log("Success!! :)");
+        console.log("Success!! :)");
 
-        parseWithCSVParser(collection, database);
+        // parseWithCSVParser(collection, database);
         // deleteAllData(collection, database);
+
+        displayOneItem(collection, database, "Adidas");
     });
 }
 
@@ -130,8 +132,8 @@ function displayOneItem(collection, database, target) {
     var s = collection.find().stream();
 
     s.on("data", function(item) {
-        if (item["Company"] == target)
-            console.log(`Data: ${item.Company} and ${item.Ticker}`);
+        if (item["name"] == target)
+            console.log(`Data: ${item.name} and ${item.ticker}`);
     })
     .on("end", function() {
         database.close();
