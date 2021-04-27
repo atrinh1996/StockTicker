@@ -1,3 +1,5 @@
 node_modules
 node_StockTicker.js
+StockTickerDisplay.js
+StockTickerMainFunctions.js
 result.html
