@@ -43,12 +43,12 @@ function main() {
         var dbo = database.db("StockDB");
         var collection = dbo.collection('companies');
 
-        console.log("Success!! :)");
+        console.log("Success connecting to DB!! :)");
 
-        // parseWithCSVParser(collection, database);
+        parseWithCSVParser(collection, database);
         // deleteAllData(collection, database);
 
-        displayOneItem(collection, database, "Adidas");
+        // displayOneItem(collection, database, "Adidas");
     });
 }
 
@@ -84,11 +84,6 @@ function parseWithCSVParser(coll, db) {
         .on('data', function(row) {
             var newData = objectWithCustomKeys(row);
             dataArr.push(newData);
-            // console.log(newData);
-            // coll.insertOne(newData, (err, res) => {
-            //     if (err) throw err;
-            //     // console.log('inserted new doc');
-            // });
         })
         .on('end', function() {
             // console.log(dataArr);

@@ -46,43 +46,9 @@ const server = http.createServer((req, res) => {
 
             var type = pdata['input_type'];
             var target = pdata['user_input'];
-            // console.log(`User put in ${target} for ${type}.`);
+            console.log(`User put in ${target} for ${type}.`);
 
-            var t = "";
-
-            MongoClient.connect(mongoUrl, {useUnifiedTopology: true}, (err, database) => {
-                if (err) {
-                    console.log("Connection to Mongo err: " + err);
-                    return;
-                }
-
-                // get database and collection object
-                var dbo = database.db("StockDB");
-                var collection = dbo.collection('companies');
-
-                theQuery = "";
-                if (type == "company") {
-                    theQuery = {name: target};
-                    t += `<h2>Company: ${target} has ticker: </h2><br>`;
-                } else if (type == "ticker") {
-                    theQuery = {ticker: target};
-                    t += `<h2>Companies with ticker code ${target} are: </h2><br>`;
-                }
-                
-                collection.find(theQuery).toArray((err, items) => {
-                    if (err) {
-                        console.log("Query Error: " + err);
-                        database.close();
-                    } else {
-                        for (i = 0; i < items.length; i++) {
-                            // console.log(`${i}: ${items[i].name} has ticker ${items[i].ticker}`);
-                            t += `${items[i].name} (${items[i].ticker})<br>`;
-                        }
-                        // database.close();
-                        res.end(t);
-                    }
-                });
-            });
+            connectAndDisplay(target, type, res);
         });
     } 
     else { 
@@ -137,4 +103,55 @@ function display404Page(err, res) {
 function displayCurrentContent(content, contentType, res) {
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(content, 'utf8');
+}
+
+/* connectAndDisplay
+ * Query the database and display information requested
+ */
+async function connectAndDisplay(target, type, res) {
+    var t = "";
+
+    MongoClient.connect(mongoUrl, {useUnifiedTopology: true}, async (err, database) => {
+        if (err) {
+            console.log("Connection to Mongo err: " + err);
+            return;
+        }
+
+        // get database and collection object
+        var dbo = database.db("StockDB");
+        var collection = dbo.collection('companies');
+
+        try {
+            theQuery = "";
+            queryOptions = "";
+            if (type == "company") {
+                theQuery = {name: target};
+                queryOptions = {sort:{name:1}, projection:{_id:0, name:1, ticker:1}};
+                t += `<h2>Company: ${target} has ticker: </h2><br>`;
+            } else if (type == "ticker") {
+                theQuery = {ticker: target};
+                queryOptions = {sort:{name:1}, projection:{_id:0, name:1, ticker:1}};
+                t += `<h2>Companies with ticker code ${target} are: </h2><br>`;
+            }
+
+            var result = await collection.find(theQuery, queryOptions).toArray();
+            // console.log(result);
+
+            if (result.length === 0) {
+                console.log(`No results found`);
+                t += `No results found.`;
+            } else {
+                result.forEach(function (curr) {
+                    console.log(`${curr.name} has ticker ${curr.ticker}`);
+                    t += `${curr.name} (${curr.ticker})<br>`;
+                });
+            }
+        }
+
+        finally {
+            // console.log(`Writing Result and Closing DB`);
+            res.end(t);
+            database.close();
+        }
+    });
 }
